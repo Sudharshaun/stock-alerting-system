@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: user-stock-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres@123
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "29293312675-h2h2bhlgg4e8j8j6urn0hd8vr8ubg7je.apps.googleusercontent.com"
+            client-secret: "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"
+            scope: profile, email
+            redirect-uri: "http://localhost:8081/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+server:
+  port: 8081
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+logging:
+  level:
+    root: INFO
+    com.stockalertingsystem: DEBUG
+  file:
+    name: logs/app.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
