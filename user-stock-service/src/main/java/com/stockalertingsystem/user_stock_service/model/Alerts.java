@@ -12,7 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Getter
 @Setter
 @Data
-@Table(name = "subscriptions")
+@Table(name = "alerts")
 public class Alerts {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

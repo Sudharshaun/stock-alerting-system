@@ -1,25 +1,21 @@
 package com.stockalertingsystem.user_stock_service.security;
 
-import com.stockalertingsystem.user_stock_service.handlers.CustomOidcLoginSuccessHandler;
-import com.stockalertingsystem.user_stock_service.service.CustomOidcUserService;
+import com.stockalertingsystem.user_stock_service.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {
 
-  private final CustomOidcUserService customOidcUserService;
-  private final CustomOidcLoginSuccessHandler customOidcLoginSuccessHandler;
+  private final CustomOAuth2UserService customOAuth2UserService;
 
-  public SecurityConfiguration(
-      CustomOidcUserService customOidcUserService,
-      CustomOidcLoginSuccessHandler customOidcLoginSuccessHandler) {
-    this.customOidcUserService = customOidcUserService;
-    this.customOidcLoginSuccessHandler = customOidcLoginSuccessHandler;
+  public SecurityConfiguration(CustomOAuth2UserService customOAuth2UserService) {
+    this.customOAuth2UserService = customOAuth2UserService;
   }
 
   @Bean
@@ -29,16 +25,18 @@ public class SecurityConfiguration {
                 authorizeRequests
                     .requestMatchers("/", "/login")
                     .permitAll()
+                    .requestMatchers("/api/**")
+                    .hasAnyRole("USER")
                     .anyRequest()
                     .authenticated())
         .oauth2Login(
             oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint(
-                        userInfoEndpoint -> userInfoEndpoint.oidcUserService(customOidcUserService))
-                    .successHandler(customOidcLoginSuccessHandler))
-        .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedPage("/error"));
-
+                        userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
+                    .defaultSuccessUrl("/"))
+        .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedPage("/error-page"));
+    http.csrf(AbstractHttpConfigurer::disable);
     return http.build();
   }
 }

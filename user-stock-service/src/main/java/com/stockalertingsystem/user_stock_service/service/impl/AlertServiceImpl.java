@@ -10,6 +10,7 @@ import com.stockalertingsystem.user_stock_service.repository.StockRepository;
 import com.stockalertingsystem.user_stock_service.repository.UserRepository;
 import com.stockalertingsystem.user_stock_service.service.AlertService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,7 @@ public class AlertServiceImpl implements AlertService {
 
   @Override
   public AlertsResponse add(SubscriptionRequest subscriptionRequest) {
-    User user =
-        userRepository
-            .findById(subscriptionRequest.getUserId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+    User user = getUser(subscriptionRequest.getUserId());
     Stock stock =
         stockRepository
             .findById(subscriptionRequest.getStockId())
@@ -41,7 +39,15 @@ public class AlertServiceImpl implements AlertService {
   }
 
   @Override
-  public List<AlertsResponse> getAlertsForUser(long id) {
-    return List.of();
+  public List<Alerts> getAlertsForUser(long id) {
+    User user = getUser(id);
+    Optional<Alerts> alerts = alertsRepository.findByUserId(user.getId());
+    return alerts.isPresent() ? alerts.stream().toList() : List.of();
+  }
+
+  private User getUser(long id) {
+    User user =
+        userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    return user;
   }
 }

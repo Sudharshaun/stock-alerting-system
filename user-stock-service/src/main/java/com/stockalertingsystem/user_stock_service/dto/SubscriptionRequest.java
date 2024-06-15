@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SubscriptionRequest {
-  private long UserId;
+  private long userId;
   private long stockId;
   private String conditionType;
   private BigDecimal threshold;

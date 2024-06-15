@@ -6,9 +6,10 @@ import com.stockalertingsystem.user_stock_service.service.StockService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/api/stocks")
 @Slf4j
 public class StocksController {
@@ -28,6 +29,11 @@ public class StocksController {
         stockRequest.getStockName(),
         stockRequest.getStockSymbol());
     return ResponseEntity.accepted().body(stockService.addStock(stockRequest));
+  }
+
+  @PostMapping("/{id}")
+  public String addDummy(@PathVariable String id) {
+    return "Added";
   }
 
   @GetMapping
